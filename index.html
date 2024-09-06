@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulacion - TP2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inconsolata', sans-serif;
+        }
+        input {
+            accent-color: black;
+        }
+        #numeros-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col items-center bg-slate-100">
+    <div class="flex flex-col text-left h-100 content-center max-w-xl bg-slate-200 h-full">
+        <div class="m-5">
+            <h2 class="font-semibold text-lg py-2">Number generator</h2>
+            <p class="py-2">Elija un algoritmo e ingrese la cantidad de numeros a generar</p>
+        </div>
+
+        <div class="flex flex-row mx-5">
+            <form class="w-full flex justify-around gap-x-3">
+                <!-- Opción Aditivo -->
+                <label for="opcionAditivo" class="border border-solid border-current p-5 w-full">
+                    <input type="radio" id="opcionAditivo" name="tipoOperacion" value="aditivo">
+                    Aditivo
+                    <p class="text-slate-600">Generar numeros con algoritmo aditivo</p>
+                </label>
+                
+                <!-- Opción Multiplicador -->
+                <label for="opcionMultiplicador" class="border border-solid border-current p-5 w-full">
+                    <input type="radio" id="opcionMultiplicador" name="tipoOperacion" value="multiplicador">
+                    Multiplicador
+                    <p class="text-slate-600">Generar numeros con algoritmo multiplicador</p>
+                </label>
+            </form>
+        </div>
+        
+        <div class="m-5">
+            <p>Cantidad</p>
+            <input type="number" class="w-full border border-solid border-current my-2 h-8 p-2" id="cantidad"></input>
+
+            <button class="bg-slate-600 w-full my-3 p-2 text-white" onclick="generarNumeros()">
+                Generar numeros aleatorios
+            </button>
+
+            <div class="border border-solid">
+                <p>Numeros generados</p>
+                <div class="bg-slate-300 mt-3 max-h-72 overflow-y-scroll p-4" id="numeros-container">
+                    <p class="break-words text-slate-700" id="numbers">
+                        Aqui apareceran tus numeros...
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="mx-5">
+            <p>Pagina generada por el grupo K</p>
+            <div class="text-slate-600 m-2">
+                <p>* Bertello Martin, Natanael Adriel.</p>
+                <p>* Cappiello Leonel.</p>
+                <p>* Georgetti, Gonzalo.</p>
+                <p>* Koncurat, Thomas Leonardo.</p>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    const quantity = document.getElementById('cantidad');
+    quantity.value = "100"
+
+    function generarNumeros() {
+        const tipoOperacion = document.querySelector('input[name="tipoOperacion"]:checked');
+        const cantidad = document.getElementById('cantidad').value;
+        const numerosContainer = document.getElementById('numbers');
+
+        if (!tipoOperacion) {
+            alert("Seleccione un tipo de operación");
+            return;
+        }
+
+        if (!cantidad || cantidad <= 0) {
+            alert("Ingrese una cantidad válida de números a generar");
+            return;
+        }
+
+        let numerosGenerados;
+        if (tipoOperacion.value === 'aditivo') {
+            numerosGenerados = generarAditivo(cantidad);
+        } else if (tipoOperacion.value === 'multiplicador') {
+            numerosGenerados = generarMultiplicador(cantidad);
+        }
+
+        // Normalizar números generados entre 0 y 1
+        const numerosNormalizados = numerosGenerados.map(num => (num / 100).toFixed(2));
+        
+        numerosContainer.textContent = numerosNormalizados.join(', ');
+    }
+
+    function generarAditivo(cantidad) {
+        const numeros = [];
+        let semilla = Math.floor(Math.random() * 100); // Semilla inicial
+        const incremento = 5; // Incremento aditivo
+
+        for (let i = 0; i < cantidad; i++) {
+            semilla = (semilla + incremento) % 100; // Algoritmo aditivo
+            numeros.push(semilla);
+        }
+        return numeros;
+    }
+
+    function generarMultiplicador(cantidad) {
+        const numeros = [];
+        let semilla = Math.floor(Math.random() * 100); // Semilla inicial
+        const multiplicador = 3; // Factor multiplicador
+
+        for (let i = 0; i < cantidad; i++) {
+            semilla = (semilla * multiplicador) % 100; // Algoritmo multiplicador
+            numeros.push(semilla);
+        }
+        return numeros;
+    }
+</script>
+</html>
