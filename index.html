@@ -48,7 +48,7 @@
         
         <div class="m-5">
             <p>Cantidad</p>
-            <input type="number" class="w-full border border-solid border-current my-2 h-8 p-2 bg-slate-100" id="cantidad"></input>
+            <input type="number" class="w-full border border-solid border-current my-2 h-8 p-2 bg-slate-100" id="cantidad" value="100"></input>
 
             <button class="bg-slate-600 w-full my-3 p-2 text-white" onclick="generarNumeros()">
                 Generar numeros aleatorios
@@ -75,59 +75,62 @@
     </div>
 </body>
 <script>
-    const quantity = document.getElementById('cantidad');
-    quantity.value = "100"
+    function generateAdditiveRandomNumbers(count) {
+        // Parámetros del generador
+        const a = 1664525;  // Multiplicador
+        const c = 1013904223; // Incremento
+        const m = 2**32;     // Módulo (2^32 para un rango común)
+        let Xn = Math.floor(Math.random() * m); // Valor inicial
+
+        const results = [];
+
+        for (let i = 0; i < count; i++) {
+            Xn = (a * Xn + c) % m;
+            // Genera el número pseudoaleatorio entre 0 y 1
+            let randomValue = Xn / m;
+            // Asegura una precisión de al menos 3 dígitos
+            results.push(parseFloat(randomValue.toFixed(3)));
+        }
+
+        return results;
+    }
+
+    function generateMultiplicativeRandomNumbers(count) {
+        // Parámetros del generador
+        const a = 1664525;  // Multiplicador
+        const m = 2**32;     // Módulo (2^32 para un rango común)
+        let Xn = Math.floor(Math.random() * m); // Valor inicial
+
+        const results = [];
+
+        for (let i = 0; i < count; i++) {
+            Xn = (a * Xn) % m;
+            // Genera el número pseudoaleatorio entre 0 y 1
+            let randomValue = Xn / m;
+            // Asegura una precisión de al menos 3 dígitos
+            results.push(parseFloat(randomValue.toFixed(3)));
+        }
+
+        return results;
+    }
 
     function generarNumeros() {
-        const tipoOperacion = document.querySelector('input[name="tipoOperacion"]:checked');
-        const cantidad = document.getElementById('cantidad').value;
-        const numerosContainer = document.getElementById('numbers');
+        const count = parseInt(document.getElementById('cantidad').value);
+        try {
+            const tipoOperacion = document.querySelector('input[name="tipoOperacion"]:checked').value;    
+            let numbers;
 
-        if (!tipoOperacion) {
-            alert("Seleccione un tipo de operación");
-            return;
+            if (tipoOperacion === 'aditivo') {
+                numbers = generateAdditiveRandomNumbers(count);
+            } else if (tipoOperacion === 'multiplicador') {
+                numbers = generateMultiplicativeRandomNumbers(count);
+            }
+
+            // Mostrar los números generados en el elemento con id="numbers"
+            document.getElementById('numbers').textContent = numbers.join(', ');
+        } catch (error) {
+            alert('Por favor, seleccione un método de generación de números.');
         }
-
-        if (!cantidad || cantidad <= 0) {
-            alert("Ingrese una cantidad válida de números a generar");
-            return;
-        }
-
-        let numerosGenerados;
-        if (tipoOperacion.value === 'aditivo') {
-            numerosGenerados = generarAditivo(cantidad);
-        } else if (tipoOperacion.value === 'multiplicador') {
-            numerosGenerados = generarMultiplicador(cantidad);
-        }
-
-        // Normalizar números generados entre 0 y 1
-        const numerosNormalizados = numerosGenerados.map(num => (num / 100).toFixed(2));
-        
-        numerosContainer.textContent = numerosNormalizados.join(', ');
-    }
-
-    function generarAditivo(cantidad) {
-        const numeros = [];
-        let semilla = Math.floor(Math.random() * 100); // Semilla inicial
-        const incremento = 5; // Incremento aditivo
-
-        for (let i = 0; i < cantidad; i++) {
-            semilla = (semilla + incremento) % 100; // Algoritmo aditivo
-            numeros.push(semilla);
-        }
-        return numeros;
-    }
-
-    function generarMultiplicador(cantidad) {
-        const numeros = [];
-        let semilla = Math.floor(Math.random() * 100); // Semilla inicial
-        const multiplicador = 3; // Factor multiplicador
-
-        for (let i = 0; i < cantidad; i++) {
-            semilla = (semilla * multiplicador) % 100; // Algoritmo multiplicador
-            numeros.push(semilla);
-        }
-        return numeros;
     }
 </script>
 </html>
